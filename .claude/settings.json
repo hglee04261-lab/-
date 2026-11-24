@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Edit(./sermons/**)",
+      "Write(./sermons/**)",
+      "Bash(python3 .claude/hooks/check_sermon.py:*)",
+      "Bash(mkdir -p sermons/:*)",
+      "WebSearch"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check_sermon.py"
+          }
+        ]
+      }
+    ]
+  }
+}
