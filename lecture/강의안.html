@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 설교 강의안</title>
+<meta name="description" content="서울신학대학교 설교대학원 2시간 특강 — Gemini·ChatGPT·Claude로 준비하는 설교">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f4; --surface: #ffffff; --ink: #1f2430; --muted: #5d6472; --line: #e4dfd5;
+  --accent: #23305a; --accent-soft: #e9ecf6; --code-bg: #f3f0ea;
+  --gemini: #2f6fd6; --gpt: #1f9a6b; --claude: #d2702a; --rest: #b9b2a5;
+  --p1: #2f6fd6; --p2: #23305a; --p3: #1f9a6b; --p4: #d2702a; --open: #7a6f5d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171c; --surface: #1d2027; --ink: #e8e6e1; --muted: #a3a8b3; --line: #30343d;
+    --accent: #aab8ec; --accent-soft: #252b3d; --code-bg: #23262e;
+    --gemini: #6d9ef0; --gpt: #4cc79a; --claude: #f0a064; --rest: #5d5850;
+    --p1: #4f86e3; --p2: #5b6bab; --p3: #2fae7f; --p4: #e08544; --open: #8c826f;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171c; --surface: #1d2027; --ink: #e8e6e1; --muted: #a3a8b3; --line: #30343d;
+  --accent: #aab8ec; --accent-soft: #252b3d; --code-bg: #23262e;
+  --gemini: #6d9ef0; --gpt: #4cc79a; --claude: #f0a064; --rest: #5d5850;
+  --p1: #4f86e3; --p2: #5b6bab; --p3: #2fae7f; --p4: #e08544; --open: #8c826f;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.75 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  word-break: keep-all; overflow-wrap: anywhere; }
+a { color: var(--accent); }
+.layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 40px;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+nav.toc { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 32px 0; }
+nav.toc h2 { font-size: 13px; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc a { display: block; padding: 8px 12px; border-left: 3px solid transparent;
+  color: var(--ink); text-decoration: none; font-size: 15px; border-radius: 0 6px 6px 0; }
+nav.toc a span { display: block; font-size: 12px; color: var(--muted); }
+nav.toc a:hover, nav.toc a.active { background: var(--accent-soft); border-left-color: var(--accent); }
+.theme-btn { margin-top: 20px; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+main { padding: 32px 0 80px; min-width: 0; }
+.hero { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px 28px; }
+.hero .kicker { margin: 0; color: var(--muted); font-size: 14px; }
+.hero h1 { font-family: "Noto Serif KR", serif; font-size: clamp(28px, 4.5vw, 40px); line-height: 1.3; margin: 8px 0 12px; }
+.hero .quote { font-family: "Noto Serif KR", serif; font-size: 18px; color: var(--accent); margin: 0 0 20px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; }
+.meta li { background: var(--accent-soft); padding: 4px 12px; border-radius: 999px; font-size: 14px; }
+.ais { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.ai { border: 1px solid var(--line); border-top: 4px solid; border-radius: 10px; padding: 12px 14px; }
+.ai b { display: block; } .ai small { color: var(--muted); }
+.ai.g { border-top-color: var(--gemini); } .ai.c { border-top-color: var(--gpt); } .ai.cl { border-top-color: var(--claude); }
+.timeline { display: flex; gap: 3px; border-radius: 10px; overflow: hidden; }
+.seg { color: #fff; padding: 10px 8px; min-width: 0; }
+.seg b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg small { font-size: 11px; opacity: .9; white-space: nowrap; }
+.seg-open { background: var(--open); } .seg-p1 { background: var(--p1); } .seg-p2 { background: var(--p2); }
+.seg-p3 { background: var(--p3); } .seg-p4 { background: var(--p4); } .seg-rest { background: var(--rest); }
+.tl-caption { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+section { margin-top: 56px; }
+.sec-head { border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 24px; }
+.sec-head .kicker { margin: 0; font-weight: 700; color: var(--accent); letter-spacing: .04em; }
+.sec-head h1 { font-family: "Noto Serif KR", serif; font-size: clamp(22px, 3.2vw, 30px); line-height: 1.4; margin: 4px 0 0; }
+section.appendix .sec-head { border-bottom-style: dashed; }
+.prose h2 { font-size: 22px; margin: 40px 0 12px; padding-left: 12px; border-left: 5px solid var(--accent); line-height: 1.4; }
+.prose h3 { font-size: 18px; margin: 28px 0 8px; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+.prose blockquote { margin: 16px 0; padding: 12px 18px; background: var(--accent-soft);
+  border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; }
+.prose blockquote p { margin: 4px 0; }
+.tbl { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); font-weight: 700; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+pre { position: relative; background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 16px 16px; overflow-x: auto; font-size: 14px; line-height: 1.65; }
+pre code { font-family: "Noto Sans KR", ui-monospace, monospace; white-space: pre-wrap; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: .92em; }
+pre code { background: none; padding: 0; }
+.copy { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; padding: 3px 10px;
+  border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.copy.done { color: var(--gpt); }
+footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; padding: 0 16px; gap: 0; }
+  nav.toc { position: static; height: auto; padding: 16px 0 0; }
+  nav.toc ol { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+  nav.toc li { flex: 0 0 auto; }
+  nav.toc a { border-left: 0; border-bottom: 3px solid transparent; border-radius: 6px; padding: 6px 10px; }
+  nav.toc h2, .theme-btn { display: none; }
+  .hero { padding: 24px 18px; }
+  .ais { grid-template-columns: 1fr; }
+  .timeline { flex-direction: column; gap: 2px; }
+  .seg { flex: none !important; display: flex; justify-content: space-between; padding: 8px 12px; }
+  .seg b { font-size: 14px; } .seg small { font-size: 12px; }
+}
+@media print {
+  :root { --bg: #fff; --surface: #fff; --ink: #000; --muted: #444; --line: #ccc; --accent: #23305a; --accent-soft: #eef0f7; --code-bg: #f5f5f5; }
+  nav.toc, .copy, .theme-btn { display: none !important; }
+  .layout { display: block; max-width: none; padding: 0; }
+  body { font-size: 11pt; }
+  section { break-before: page; margin-top: 0; }
+  pre, .tbl, blockquote { break-inside: avoid; }
+  .seg, th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="목차">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#top"><span>개요</span>한눈에 보기</a></li>
+<li><a href="#s0"><span>진행안</span>전체 흐름</a></li>
+<li><a href="#s1"><span>Part 1</span>AI 3대장 비교</a></li>
+<li><a href="#s2"><span>Part 2</span>S.E.R.M.O.N. 6단계</a></li>
+<li><a href="#s3"><span>Part 3</span>3대장 역할분담</a></li>
+<li><a href="#s4"><span>Part 4</span>오케스트레이션</a></li>
+<li><a href="#a1"><span>부록 A</span>슬라이드 구성안</a></li>
+<li><a href="#a2"><span>부록 B</span>수강생 실습지</a></li>
+  </ol>
+  <button class="theme-btn" type="button" id="themeBtn">다크/라이트 전환</button>
+</nav>
+<main>
+<div class="hero" id="top">
+  <p class="kicker">서울신학대학교 설교대학원 특강</p>
+  <h1>AI와 함께 준비하는 최고의 설교</h1>
+  <p class="quote">“AI는 서재를 넓혀 주지만, 강단에 대신 서 주지는 않는다.”</p>
+  <ul class="meta">
+    <li>대상: 현장 사역 목사·전도사</li><li>120분</li><li>이론 20 · 시연 50 · 실습 30</li><li>시연 본문: 누가복음 15:11–32</li>
+  </ul>
+  <div class="ais">
+    <div class="ai g"><b>📚 Gemini — 사서</b><small>찾는다: 자료·출처·배경·사실검증</small></div>
+    <div class="ai c"><b>💡 ChatGPT — 동역자</b><small>떠올린다: 제목·예화·적용·리허설</small></div>
+    <div class="ai cl"><b>✍️ Claude — 편집자</b><small>다듬는다: 주해·명제·원고·검토</small></div>
+  </div>
+  <div class="timeline" role="img" aria-label="120분 강의 시간 배분">
+<div class="seg seg-open" style="flex:10" title="0:00 · 10분"><b>여는 말</b><small>0:00 · 10분</small></div>
+<div class="seg seg-p1" style="flex:20" title="0:10 · 20분"><b>Part 1 비교</b><small>0:10 · 20분</small></div>
+<div class="seg seg-p2" style="flex:30" title="0:30 · 30분"><b>Part 2 6단계</b><small>0:30 · 30분</small></div>
+<div class="seg seg-rest" style="flex:10" title="1:00 · 10분"><b>휴식</b><small>1:00 · 10분</small></div>
+<div class="seg seg-p3" style="flex:25" title="1:10 · 25분"><b>Part 3 실전</b><small>1:10 · 25분</small></div>
+<div class="seg seg-p4" style="flex:15" title="1:35 · 15분"><b>Part 4 지휘</b><small>1:35 · 15분</small></div>
+<div class="seg seg-open" style="flex:10" title="1:50 · 10분"><b>마무리</b><small>1:50 · 10분</small></div>
+  </div>
+  <p class="tl-caption">막대 길이 = 시간 비율. 각 파트 상세는 아래 목차에서.</p>
+</div>
+<section id="s0" class="part"><header class="sec-head"><p class="kicker">진행안</p><h1>강의안 — &quot;AI와 함께 준비하는 최고의 설교&quot; (120분)</h1></header><div class="prose"><p><strong>대상</strong> 서울신학대학교 설교대학원 (현장 사역 중인 목사·전도사)<br />
+<strong>목표</strong> 강의가 끝나면 수강생이 <strong>다음 주 설교를 Gemini·ChatGPT·Claude로 직접 준비할 수 있다.</strong><br />
+<strong>원칙</strong> 이론 20% · 시연 50% · 실습/질문 30%</p>
+<hr />
+<h2>준비물</h2>
+<ul>
+<li>강사 노트북 1대: 브라우저 탭 3개(Gemini / ChatGPT / Claude) 로그인 상태 + Claude Code(선택, Part 4 시연용)</li>
+<li>화면 분할: 왼쪽 슬라이드, 오른쪽 AI 화면 (또는 탭 전환)</li>
+<li>수강생 배포: <a href="#a2">06-실습지.md</a> 인쇄본, <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts">prompts/</a> 프롬프트 카드 PDF 또는 QR</li>
+<li>시연 본문: <strong>누가복음 15:11–32</strong> (모두 익숙한 본문이라 AI 결과의 좋고 나쁨이 바로 보임)</li>
+<li>백업: <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/examples/눅15-시연.md">examples/눅15-시연.md</a> (인터넷·로그인 문제 시 미리 받아 둔 결과로 진행)</li>
+</ul>
+<hr />
+<h2>0:00–0:10 여는 말 — "설교자의 자리, AI의 자리"</h2>
+<p><strong>핵심 메시지 한 문장:</strong> <em>AI는 서재를 넓혀 주지만, 강단에 대신 서 주지는 않는다.</em></p>
+<p>진행:<br />
+1. (질문, 손들기) "AI로 설교 준비 해 보신 분?" → "결과에 만족하신 분?" → 대부분 실망 경험. <strong>이유는 AI가 아니라 '쓰는 순서'에 있다</strong>고 연결.<br />
+2. 흔한 실패 3가지 (각 30초)<br />
+   - <strong>"설교 하나 써 줘"</strong> → 누구의 설교도 아닌 평균적인 원고<br />
+   - <strong>한 AI만 믿기</strong> → 그럴듯한 가짜 인용·가짜 주석<br />
+   - <strong>묵상 없이 AI부터</strong> → 설교자의 영적 고백이 사라짐<br />
+3. 오늘의 약속: "<strong>6단계 순서 + 3명의 AI 조수 + 1명의 지휘자(나)</strong>"</p>
+<hr />
+<h2>0:10–0:30 Part 1. AI 3대장 비교 (20분)</h2>
+<p>자료: <a href="#s1">01-AI-3대장-비교.md</a></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>분</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>세 AI 성격을 한 줄로: <strong>Gemini = 도서관 사서, ChatGPT = 아이디어 많은 동역자, Claude = 꼼꼼한 원고 편집자</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>라이브 비교 시연</strong>: 같은 질문을 세 AI에 동시에 → 차이 관찰 (질문은 아래)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>설교 준비 관점 장단점 표 정리 + "그래서 누구에게 무엇을 맡길까"</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>라이브 비교 질문 (세 AI에 똑같이 붙여넣기):</strong></p>
+<pre><button class="copy" type="button">복사</button><code>누가복음 15:11-32 탕자의 비유를 설교하려 합니다.
+1) 1세기 유대 사회에서 아들이 유산을 미리 요구한 것의 의미를 설명하고
+2) 그 근거가 되는 학자나 자료를 출처와 함께 제시해 주세요.
+출처가 확실하지 않으면 &quot;확실하지 않음&quot;이라고 표시해 주세요.
+</code></pre>
+<p>관찰 포인트(청중에게 미리 말해 두기): ① 출처가 실제로 있는가 ② 모르는 것을 모른다고 하는가 ③ 문장이 설교에 쓸 만한가</p>
+<hr />
+<h2>0:30–1:00 Part 2. S.E.R.M.O.N. 6단계 (30분)</h2>
+<p>자료: <a href="#s2">02-SERMON-6단계-방법론.md</a></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>분</th>
+<th>단계</th>
+<th>시연 포인트</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>전체 그림</td>
+<td>6단계 + "검증은 매 단계"</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>S</strong> Seek 기도·묵상</td>
+<td>AI를 <em>끄는</em> 단계. 묵상 메모 3줄 양식 보여 주기</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>E</strong> Exegete 주해</td>
+<td>관찰 질문 프롬프트 → AI가 "답"이 아니라 "질문"을 던지게 하기</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>R</strong> Research 연구</td>
+<td>출처 기반 리서치, 내 서재(주석 PDF)에 질문하기</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>M</strong> Message 중심명제</td>
+<td>AI에게 명제 3개 받기 → <strong>고르는 것은 설교자</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>O</strong> Outline &amp; Write</td>
+<td>개요 3안 → 원고 → "내 말투로"</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>N</strong> Nail-down 검증</td>
+<td>다른 AI가 검증하게 하는 한 줄 프롬프트</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>1:00–1:10 휴식</h2>
+<p>휴식 중 화면에 띄워 둘 것: "실습지 1번 칸에 다음 주 설교 본문을 적어 오세요."</p>
+<hr />
+<h2>1:10–1:35 Part 3. 3대장 역할분담 실전 (25분)</h2>
+<p>자료: <a href="#s3">03-3대장-실전-역할분담.md</a></p>
+<ul>
+<li>6단계를 <strong>어느 AI가 맡는지</strong> 배치표 제시 (3분)</li>
+<li>탕자 비유로 <strong>릴레이 시연</strong>: Gemini(R) → Claude(M·O) → ChatGPT(예화·리허설) → Gemini/Claude(N) (17분)</li>
+<li>수강생 실습: 자기 본문으로 E단계 프롬프트 1개를 휴대폰에서 바로 실행 (5분)</li>
+</ul>
+<hr />
+<h2>1:35–1:50 Part 4. 오케스트레이션 (15분)</h2>
+<p>자료: <a href="#s4">04-오케스트레이션.md</a></p>
+<ul>
+<li>3단계 수준 소개 (Level 1 수동 릴레이 / Level 2 프로젝트 고정 / Level 3 Claude Code 지휘) (5분)</li>
+<li><strong>핸드오프 패킷</strong> 개념 — AI 사이에 "인수인계서"를 넘긴다 (3분)</li>
+<li>Level 3 짧은 시연: <code>/sermon-start</code> → <code>/handoff</code> → <code>/crosscheck</code> (5분)</li>
+<li>"매주 루틴" 주간 시간표 제시 (2분)</li>
+</ul>
+<hr />
+<h2>1:50–2:00 마무리</h2>
+<ol>
+<li>윤리 가드레일 5가지 (<a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/guidelines/윤리-신학-가드레일.md">guidelines/윤리-신학-가드레일.md</a>) — 1분씩 짧게</li>
+<li>Q&amp;A</li>
+<li><strong>과제</strong>: 다음 주 설교를 S.E.R.M.O.N.으로 준비하고 <code>AI-사용기록</code>을 함께 제출 → 다음 시간 나눔</li>
+</ol>
+<p><strong>마지막 한 문장:</strong> <em>"AI가 많은 것을 찾아 줄 수 있어도, 하나님의 음성을 듣는 일은 설교자의 몫입니다."</em></p></div></section>
+<section id="s1" class="part"><header class="sec-head"><p class="kicker">Part 1</p><h1>AI 3대장 비교 — 설교 준비 관점에서 (20분)</h1></header><div class="prose"><blockquote>
+<p>모델 버전·요금은 자주 바뀌므로 여기서는 <strong>오래 유지되는 성격과 기능</strong>만 다룹니다.<br />
+강의 직전 최신 정보는 <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/guidelines/강의전-최신정보-점검.md">guidelines/강의전-최신정보-점검.md</a>에서 확인하세요.</p>
+</blockquote>
+<hr />
+<h2>1. 한 줄 성격</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th></th>
+<th>Gemini (Google)</th>
+<th>ChatGPT (OpenAI)</th>
+<th>Claude (Anthropic)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>비유</strong></td>
+<td>📚 <strong>도서관 사서</strong></td>
+<td>💡 <strong>아이디어 많은 동역자</strong></td>
+<td>✍️ <strong>꼼꼼한 원고 편집자</strong></td>
+</tr>
+<tr>
+<td><strong>한 줄</strong></td>
+<td>찾아 주고, 출처를 붙여 준다</td>
+<td>많이, 빨리, 다양하게 내놓는다</td>
+<td>깊이 읽고, 정돈해서, 잘 쓴다</td>
+</tr>
+<tr>
+<td><strong>뿌리</strong></td>
+<td>구글 검색·유튜브·문서도구</td>
+<td>가장 넓은 사용자층·다기능</td>
+<td>긴 글 이해·글쓰기·신중함</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>2. 일반 특징 비교</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Gemini</th>
+<th>ChatGPT</th>
+<th>Claude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>최신 정보·웹 검색</td>
+<td>◎ 구글 검색 기반, 가장 강함</td>
+<td>○ 웹 검색 지원</td>
+<td>○ 웹 검색 지원</td>
+</tr>
+<tr>
+<td>심층 리서치 보고서</td>
+<td>◎ Deep Research</td>
+<td>◎ Deep Research</td>
+<td>○ 리서치 기능</td>
+</tr>
+<tr>
+<td><strong>내 자료에만 근거한 답변</strong></td>
+<td>◎ <strong>Gemini Notebook(구 NotebookLM)</strong> — 올린 자료 안에서만 답, 출처 표시</td>
+<td>○ 프로젝트 파일</td>
+<td>○ 프로젝트 지식</td>
+</tr>
+<tr>
+<td>긴 문서 한 번에 읽기</td>
+<td>◎</td>
+<td>○</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>한국어 문장력·문체</td>
+<td>○ 보고서체·개조식 경향</td>
+<td>○ 매끄럽지만 상투적·번역투 경향</td>
+<td>◎ 자연스럽고 문체 모방에 강함</td>
+</tr>
+<tr>
+<td>아이디어 발상량</td>
+<td>○</td>
+<td>◎</td>
+<td>○</td>
+</tr>
+<tr>
+<td>기억(사역 맥락 유지)</td>
+<td>○</td>
+<td>◎ 메모리·프로젝트 성숙</td>
+<td>○ 프로젝트·메모리</td>
+</tr>
+<tr>
+<td>음성 대화</td>
+<td>◎</td>
+<td>◎ 실시간 음성 대화</td>
+<td>○</td>
+</tr>
+<tr>
+<td>이미지·영상 생성</td>
+<td>◎ 이미지·영상</td>
+<td>◎ 이미지</td>
+<td>✕ (생성 불가, 분석은 가능)</td>
+</tr>
+<tr>
+<td>유튜브·영상 이해</td>
+<td>◎</td>
+<td>○</td>
+<td>△</td>
+</tr>
+<tr>
+<td>구글 문서·드라이브 연동</td>
+<td>◎</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr>
+<td>모를 때 "모른다" 하기</td>
+<td>○</td>
+<td>△ 자신 있게 지어내는 경향</td>
+<td>◎ 상대적으로 신중</td>
+</tr>
+</tbody>
+</table></div>
+<p>(◎ 강점 ○ 보통 △ 약함 ✕ 없음 — 강사의 사용 경험에 근거한 상대 비교입니다.)</p>
+<hr />
+<h2>3. ★ 설교 준비에 적용할 때 장단점 (핵심)</h2>
+<h3>📚 Gemini — "자료 담당"</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>역사·지리·문화 배경을 <strong>최신 자료와 출처 링크</strong>로 찾아 준다</td>
+<td>신학적 뉘앙스, 한국 교회 정서 이해가 얕을 때가 있다</td>
+</tr>
+<tr>
+<td><strong>Gemini Notebook</strong>: 내가 가진 주석 PDF·이전 설교를 올리면 <em>그 안에서만</em> 답하고 근거 위치를 보여 줌 → 환각 최소</td>
+<td>문장이 보고서체라 설교 원고로 쓰기엔 딱딱하다</td>
+</tr>
+<tr>
+<td>Deep Research로 한 주제(예: "1세기 유산 상속 관습")를 보고서로 정리</td>
+<td>검색 결과에 블로그·비전문 자료가 섞인다 → 출처 등급 확인 필요</td>
+</tr>
+<tr>
+<td>유튜브 강해 영상·세미나 요약</td>
+<td>성경 장절 인용이 틀리는 경우가 있다</td>
+</tr>
+<tr>
+<td>설교 PPT 이미지, 주보 사진 생성</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>맡기면 좋은 일:</strong> R단계(배경연구), 예화의 사실 확인, 내 서재 자료 검색</p>
+<h3>💡 ChatGPT — "발상 담당"</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>설교 제목·도입 질문·예화·적용 아이디어를 <strong>한 번에 수십 개</strong></td>
+<td><strong>그럴듯한 환각</strong>: 존재하지 않는 주석가·책·명언을 자신 있게 인용</td>
+</tr>
+<tr>
+<td>메모리·프로젝트로 "우리 교회 상황"을 기억</td>
+<td>사용자 의견에 맞장구치는 경향 → 비판적 검토자로는 약함</td>
+</tr>
+<tr>
+<td><strong>음성 대화로 설교 리허설</strong>, 청중 질문 역할극</td>
+<td>문체가 상투적("~할 수 있습니다", "결론적으로")</td>
+</tr>
+<tr>
+<td>설교 슬라이드·포스터 이미지 생성, 소그룹 교재 변환</td>
+<td>긴 원고에서 앞뒤 논리가 흐트러지기 쉽다</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>맡기면 좋은 일:</strong> O단계의 발상(제목·예화·적용 후보), 리허설, 나눔자료·시각자료</p>
+<h3>✍️ Claude — "주해·원고 담당"</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>본문 + 주석 여러 권 분량을 한 번에 읽고 <strong>구조·논리 분석</strong></td>
+<td>이미지 생성이 안 된다</td>
+</tr>
+<tr>
+<td><strong>한국어 원고 문장력</strong>, 내 이전 설교를 주면 <strong>내 말투를 따라 씀</strong></td>
+<td>사용량 제한에 비교적 빨리 걸릴 수 있다</td>
+</tr>
+<tr>
+<td>확실하지 않은 것을 "확실하지 않다"고 말하는 경향</td>
+<td>최신 웹 자료 탐색 폭은 Gemini보다 좁다</td>
+</tr>
+<tr>
+<td>개요·원고의 <strong>논리 비평, 신학적 검토</strong>에 강함</td>
+<td>지나치게 조심스럽거나 길어질 수 있다 → "짧게" 지시 필요</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>맡기면 좋은 일:</strong> E단계(주해 정리), M단계(명제 스파링), O단계(개요 설계·원고), N단계(신학·논리 검토)</p>
+<hr />
+<h2>4. 공통 주의사항 (세 AI 모두)</h2>
+<ol>
+<li><strong>모든 AI는 틀린다.</strong> 셋 다 성경 구절, 원어 의미, 인용 출처를 틀릴 수 있다.</li>
+<li><strong>AI는 성령의 조명을 대신하지 않는다.</strong> AI가 주는 것은 "정보"이지 "말씀의 확신"이 아니다.</li>
+<li><strong>같은 질문도 매번 답이 다르다.</strong> 마음에 안 들면 다시 묻거나 다른 AI에 물어라.</li>
+<li><strong>성도 개인정보는 넣지 않는다.</strong> 상담 내용·실명·병력 금지.</li>
+<li><strong>결론</strong>: 하나를 고르는 게 아니라 <strong>강점에 따라 나눠 맡기고, 서로 검증시킨다.</strong> → Part 3·4</li>
+</ol>
+<hr />
+<h2>5. 슬라이드용 요약 (한 장)</h2>
+<pre><button class="copy" type="button">복사</button><code>Gemini   = 찾는다  (자료·출처·배경)     ⚠ 딱딱함, 출처 등급 확인
+ChatGPT  = 떠올린다 (제목·예화·적용·리허설) ⚠ 그럴듯한 가짜 인용
+Claude   = 다듬는다 (주해·구조·원고·검토)  ⚠ 이미지 없음, 사용량 제한
+
+→ 하나만 쓰지 말고, 나눠 맡기고, 서로 검증시켜라.
+</code></pre></div></section>
+<section id="s2" class="part"><header class="sec-head"><p class="kicker">Part 2</p><h1>최고의 설교를 위한 S.E.R.M.O.N. 6단계 (30분)</h1></header><div class="prose"><blockquote>
+<p><strong>"설교 하나 써 줘"가 아니라, 6번 나눠서 묻는다.</strong><br />
+한 번에 다 맡기면 평균적인 설교가 나오고, 단계별로 맡기면 <strong>나의 설교</strong>가 나온다.</p>
+</blockquote>
+<pre><button class="copy" type="button">복사</button><code> S  Seek       기도·묵상          ← AI 끄기 (설교자만)
+ E  Exegete    본문 주해          ← AI는 질문하는 조교
+ R  Research   배경·자료 연구     ← AI는 출처 가져오는 사서
+ M  Message    중심명제·목적      ← 결정은 설교자, AI는 스파링 상대
+ O  Outline    개요·원고          ← AI는 초안 작가, 설교자는 편집장
+ N  Nail-down  검증·완성          ← 다른 AI가 검증
+              ─────────────────
+              검증은 매 단계에서!
+</code></pre>
+<p>각 단계 = <strong>목적 · 설교자의 일 · AI의 일 · 대표 프롬프트 · 함정</strong>.<br />
+전체 프롬프트는 <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts">prompts/</a> 폴더에 있습니다.</p>
+<hr />
+<h2>S — Seek: 기도와 묵상 (AI 끄기)</h2>
+<ul>
+<li><strong>목적</strong>: 본문이 <em>나에게</em> 먼저 말씀하게 한다. 설교의 영적 진정성이 여기서 나온다.</li>
+<li><strong>설교자의 일</strong>: 본문을 3번 소리 내어 읽고, 기도하며, 아래 3줄을 적는다.</li>
+<li><strong>AI의 일</strong>: 없음. (원하면 번역본 대조표만 요청 가능)</li>
+</ul>
+<pre><button class="copy" type="button">복사</button><code>묵상 메모 3줄
+1. 마음에 걸린 단어/구절:
+2. 이 본문이 나에게 하는 말:
+3. 우리 성도에게 필요한 말:
+</code></pre>
+<blockquote>
+<p>⚠ 함정: AI부터 열면 AI의 해석이 내 묵상을 덮어 버린다. <strong>최소 30분은 AI 없이.</strong></p>
+</blockquote>
+<hr />
+<h2>E — Exegete: 본문 주해</h2>
+<ul>
+<li><strong>목적</strong>: 본문이 <em>원래</em> 무엇을 말했는지 정확히 본다.</li>
+<li><strong>설교자의 일</strong>: 관찰 → 질문 → 답을 직접 확인(원어 성경, 주석).</li>
+<li><strong>AI의 일</strong>: 답이 아니라 <strong>좋은 질문</strong>과 <strong>구조 분석</strong>을 내놓게 한다.</li>
+</ul>
+<p><strong>대표 프롬프트 (Claude 추천):</strong></p>
+<pre><button class="copy" type="button">복사</button><code>[본문] 누가복음 15:11-32
+당신은 성경 주해 조교입니다. 아직 해석이나 적용은 하지 말고,
+1) 문맥: 앞뒤 장(특히 15:1-2)과의 연결
+2) 구조: 장면 단위로 나누고 반복·대조되는 표현
+3) 관찰 질문 10개: 본문을 꼼꼼히 읽은 사람만 던질 수 있는 질문
+4) 원어상 주목할 단어 3개: 원형(음역), 의미 범위, 과잉해석 주의점
+을 표로 정리하세요. 확실하지 않은 내용은 [검증필요]로 표시하세요.
+</code></pre>
+<blockquote>
+<p>⚠ 함정: "어원 오류" — 단어 하나의 원어에 과도한 의미를 싣는 것. AI가 특히 좋아한다.</p>
+</blockquote>
+<hr />
+<h2>R — Research: 배경·자료 연구</h2>
+<ul>
+<li><strong>목적</strong>: 역사·문화·지리 배경, 주석가들의 견해, 해석사를 확보한다.</li>
+<li><strong>설교자의 일</strong>: 신뢰할 수 있는 자료를 고르고, 출처를 확인한다.</li>
+<li><strong>AI의 일</strong>: <strong>출처를 달아</strong> 가져오게 한다. 내 서재 자료가 있다면 그 안에서만 찾게 한다.</li>
+</ul>
+<p><strong>대표 프롬프트 (Gemini 추천):</strong></p>
+<pre><button class="copy" type="button">복사</button><code>누가복음 15:11-32를 설교하려 합니다. 다음을 조사해 주세요.
+1) 1세기 팔레스타인의 유산 분배 관습과 아버지가 달려가는 행동의 문화적 의미
+2) 이 비유에 대한 주요 해석 3가지(학자명과 대표 저작 포함)
+3) 각 항목마다 출처(저자, 제목, 연도, 가능하면 링크)
+학술 자료와 일반 블로그를 구분해 표시하고, 출처를 찾지 못한 내용은 쓰지 마세요.
+</code></pre>
+<p><strong>내 서재 활용 (Gemini Notebook / Claude Projects):</strong> 갖고 있는 주석 PDF, 신학 논문, 지난 설교를 올리고<br />
+<code>"올린 자료 안에서만 답하고, 근거가 된 자료와 위치를 표시하세요."</code></p>
+<blockquote>
+<p>⚠ 함정: AI가 준 출처를 <strong>직접 확인하지 않고</strong> 설교에서 인용하는 것.</p>
+</blockquote>
+<hr />
+<h2>M — Message: 중심명제와 설교 목적</h2>
+<ul>
+<li><strong>목적</strong>: "이 설교는 한 문장으로 무엇인가?" + "청중이 무엇을 하기 원하는가?"</li>
+<li><strong>설교자의 일</strong>: <strong>결정.</strong> 이것은 AI에게 넘길 수 없다.</li>
+<li><strong>AI의 일</strong>: 후보를 내고, 내 후보를 비판한다(스파링).</li>
+</ul>
+<p><strong>대표 프롬프트 (Claude 추천):</strong></p>
+<pre><button class="copy" type="button">복사</button><code>지금까지의 주해(E)와 연구(R) 결과는 아래와 같습니다. [붙여넣기]
+내 묵상 메모는 이렇습니다. [S단계 3줄]
+1) 본문의 중심 사상(Exegetical Idea)을 한 문장으로
+2) 설교의 중심명제(Homiletical Idea) 후보 3개 — 각각 장점과 위험
+3) 설교 목적(청중이 알고/느끼고/행할 것) 후보 2개
+내 묵상과 가장 잘 맞는 후보가 무엇인지 이유와 함께 말해 주세요.
+</code></pre>
+<p>그다음 → 설교자가 고르거나 직접 쓴다 → <code>"내가 정한 명제는 ○○입니다. 본문에 충실한지 비판해 주세요."</code></p>
+<blockquote>
+<p>⚠ 함정: AI가 낸 첫 번째 명제를 그대로 채택. 대개 무난하지만 평범하다.</p>
+</blockquote>
+<hr />
+<h2>O — Outline &amp; Write: 개요와 원고</h2>
+<ul>
+<li><strong>목적</strong>: 명제를 청중이 따라올 수 있는 흐름으로 만든다.</li>
+<li><strong>설교자의 일</strong>: 구조 선택, 예화·적용 선별, 최종 문장 손질.</li>
+<li><strong>AI의 일</strong>: 개요 여러 안, 예화·적용 후보 다수, 원고 초안, 문체 교정.</li>
+</ul>
+<p><strong>순서:</strong><br />
+1. <strong>개요 3안</strong> (연역형 / 귀납형 / 내러티브형) → 하나 선택<br />
+2. <strong>예화·적용 발상</strong> (ChatGPT): 연령·상황별로 10개씩 → 3개 선택<br />
+3. <strong>원고 초안</strong> (Claude): 내 설교 2~3편을 샘플로 주고 "이 문체로"<br />
+4. <strong>설교자 손질</strong>: 내 고백, 우리 교회 이야기, 성령께서 주신 마음을 넣는다</p>
+<p><strong>대표 프롬프트 (원고):</strong></p>
+<pre><button class="copy" type="button">복사</button><code>아래는 제 지난 설교 원고 2편입니다. [붙여넣기]
+문장 길이, 호흡, 청중을 부르는 말, 자주 쓰는 표현을 분석하고
+이 문체로 다음 개요의 원고 초안을 써 주세요. [개요]
+분량: 25분(약 7,500자). 예화는 [예화 후보]만 사용하고 새로 지어내지 마세요.
+</code></pre>
+<blockquote>
+<p>⚠ 함정: AI 원고를 거의 그대로 읽는 것. 청중은 "설교자의 고백"이 빠진 것을 금방 안다.</p>
+</blockquote>
+<hr />
+<h2>N — Nail-down: 검증과 완성</h2>
+<ul>
+<li><strong>목적</strong>: 틀린 것, 위험한 것, 안 들리는 것을 걸러낸다.</li>
+<li><strong>설교자의 일</strong>: 최종 판단, 소리 내어 읽기, 기도.</li>
+<li><strong>AI의 일</strong>: <strong>작성한 AI가 아닌 다른 AI</strong>가 검증한다.</li>
+</ul>
+<p><strong>4중 검증 (프롬프트 하나씩, <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts/04-교차검증.md">prompts/04-교차검증.md</a>):</strong><br />
+| 검증 | 추천 AI | 질문 |<br />
+|---|---|---|<br />
+| 사실 | Gemini | 인용·통계·역사·인물 일화가 사실인가? 출처는? |<br />
+| 신학 | Claude | 본문을 벗어난 주장, 율법주의·번영신학·도덕주의는 없는가? |<br />
+| 설교학 | Claude | 명제가 일관되게 흐르는가? 서론·결론·전환이 자연스러운가? |<br />
+| 청중 | ChatGPT (음성) | 우리 교회 ○○세대 성도가 듣는다면 어디서 지루하거나 상처받을까? |</p>
+<p><strong>마지막</strong>: 설교자가 원고를 소리 내어 읽고(시간 측정), 기도로 마친다.</p>
+<blockquote>
+<p>⚠ 함정: 원고를 쓴 AI에게 "검토해 줘" → 대개 "훌륭합니다"라고 한다.</p>
+</blockquote>
+<hr />
+<h2>한 장 요약</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>질문</th>
+<th>설교자</th>
+<th>AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S</td>
+<td>하나님은 내게 무엇을 말씀하시나?</td>
+<td>★ 전부</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>E</td>
+<td>본문은 원래 무엇을 말했나?</td>
+<td>확인</td>
+<td>질문·구조</td>
+</tr>
+<tr>
+<td>R</td>
+<td>배경과 해석사는?</td>
+<td>선별</td>
+<td>출처 있는 자료</td>
+</tr>
+<tr>
+<td>M</td>
+<td>한 문장으로 무엇인가?</td>
+<td>★ 결정</td>
+<td>후보·비판</td>
+</tr>
+<tr>
+<td>O</td>
+<td>어떻게 전할까?</td>
+<td>선택·손질</td>
+<td>개요·예화·초안</td>
+</tr>
+<tr>
+<td>N</td>
+<td>틀린 것은 없나?</td>
+<td>★ 최종 판단</td>
+<td>교차검증</td>
+</tr>
+</tbody>
+</table></div></div></section>
+<section id="s3" class="part"><header class="sec-head"><p class="kicker">Part 3</p><h1>3대장 실전 역할분담 — 탕자 비유로 릴레이하기 (25분)</h1></header><div class="prose"><blockquote>
+<p>원칙: <strong>강점에 따라 맡기고, 결과는 다음 AI에게 "인수인계서"로 넘긴다.</strong></p>
+</blockquote>
+<hr />
+<h2>1. 배치표 — 6단계 × 3대장</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>🟦 Gemini (자료)</th>
+<th>🟩 ChatGPT (발상)</th>
+<th>🟧 Claude (주해·원고)</th>
+<th>👤 설교자</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong> 묵상</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>★ 기도·묵상 메모</td>
+</tr>
+<tr>
+<td><strong>E</strong> 주해</td>
+<td>번역본 대조</td>
+<td>–</td>
+<td>★ 구조·관찰 질문·원어</td>
+<td>원어 성경으로 확인</td>
+</tr>
+<tr>
+<td><strong>R</strong> 연구</td>
+<td>★ 배경 리서치·Notebook</td>
+<td>–</td>
+<td>연구 결과 요약·정리</td>
+<td>출처 확인</td>
+</tr>
+<tr>
+<td><strong>M</strong> 명제</td>
+<td>–</td>
+<td>명제 표현 다듬기(선택)</td>
+<td>★ 명제 후보·비판</td>
+<td>★ 결정</td>
+</tr>
+<tr>
+<td><strong>O</strong> 개요</td>
+<td>–</td>
+<td>★ 제목·예화·적용 발상</td>
+<td>★ 개요 설계·원고 초안</td>
+<td>선택·손질</td>
+</tr>
+<tr>
+<td><strong>N</strong> 검증</td>
+<td>★ 사실 검증</td>
+<td>★ 청중 리허설(음성)</td>
+<td>★ 신학·설교학 검증</td>
+<td>★ 최종 판단·낭독</td>
+</tr>
+<tr>
+<td><strong>+</strong> 확장</td>
+<td>설교 이미지·영상</td>
+<td>소그룹 교재·카드뉴스</td>
+<td>큐티자료·요약문</td>
+<td>선택</td>
+</tr>
+</tbody>
+</table></div>
+<p>★ = 주 담당</p>
+<hr />
+<h2>2. 릴레이 시연 스크립트 (17분)</h2>
+<p>본문: 누가복음 15:11–32 / 청중: 장년 주일예배 / 묵상 메모(미리 준비):</p>
+<pre><button class="copy" type="button">복사</button><code>1. 마음에 걸린 구절: &quot;아직도 거리가 먼데 아버지가 그를 보고 측은히 여겨 달려가&quot;(20절)
+2. 나에게: 나는 돌아온 동생인가, 문 밖의 형인가
+3. 성도에게: 교회 안에 있지만 아버지 마음을 모르는 '형' 같은 신앙
+</code></pre>
+<h3>① Claude — E단계 (3분)</h3>
+<p><a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts/03-claude.md">prompts/03-claude.md</a> <strong>C-1 주해 조교</strong> 붙여넣기 → 구조·관찰 질문 확인.<br />
+👉 청중에게 보여 줄 것: AI가 15:1–2(바리새인의 수군거림)와 연결하는지, 형의 이야기가 결말이 열려 있다는 것을 짚는지.</p>
+<h3>② Gemini — R단계 (4분)</h3>
+<p><a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts/01-gemini.md">prompts/01-gemini.md</a> <strong>G-1 배경 리서치</strong> 붙여넣기.<br />
+👉 보여 줄 것: 출처 링크를 <strong>하나 클릭해서 실제로 열어 보기</strong>. "이게 검증입니다."<br />
+(시간이 있으면 Gemini Notebook에 주석 PDF를 올려 둔 화면을 보여 줌)</p>
+<h3>③ 핸드오프 → Claude — M단계 (3분)</h3>
+<p>Gemini 결과를 <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/templates/핸드오프-패킷.md">templates/핸드오프-패킷.md</a> 양식에 붙여 Claude로 넘김 → <strong>C-3 명제 스파링</strong>.<br />
+👉 보여 줄 것: 명제 후보 3개 중 <strong>강사가 직접 고르고 이유 말하기</strong>. 예:</p>
+<blockquote>
+<p>"아버지는 집 나간 아들뿐 아니라 집 안의 아들에게도 달려 나가신다."</p>
+</blockquote>
+<h3>④ ChatGPT — O단계 발상 (3분)</h3>
+<p><strong>P-2 예화·적용 발상</strong>: "40~60대 장년 직장인에게 와닿는 '집 안의 형' 같은 신앙 예화 10개"<br />
+👉 보여 줄 것: 아이디어의 양. 그리고 <strong>"이 중 실제 있었던 일은 몇 개죠?"</strong> 라고 다시 물어보기 → 지어낸 이야기를 실화처럼 말하는 위험을 직접 보여 줌.</p>
+<h3>⑤ Claude — O단계 원고 (2분)</h3>
+<p><strong>C-5 내 문체로 원고</strong>: 미리 준비한 강사 설교 샘플 2편 + 개요 → 서론 부분만 생성.</p>
+<h3>⑥ 교차검증 — N단계 (2분)</h3>
+<ul>
+<li>Claude가 쓴 서론을 <strong>Gemini에</strong> → "사실 검증" 프롬프트</li>
+<li><strong>ChatGPT 음성 모드</strong>로 서론을 읽어 주고 "60대 권사님 입장에서 반응해 주세요"</li>
+</ul>
+<hr />
+<h2>3. 수강생 실습 (5분)</h2>
+<p>실습지 2번: 자기 다음 주 본문으로 <strong>E단계 프롬프트</strong>를 휴대폰의 아무 AI에서 실행 → 관찰 질문 중 "새롭게 보인 것" 1개를 적기.</p>
+<hr />
+<h2>4. 자주 묻는 질문</h2>
+<p><strong>Q. 셋 다 유료로 써야 하나요?</strong><br />
+A. 아닙니다. 무료로 시작하고, <strong>가장 자주 쓰는 하나만 유료</strong>로 하세요. 원고 작업이 많다면 Claude, 자료조사가 많다면 Gemini, 다용도라면 ChatGPT.</p>
+<p><strong>Q. 하나만 쓴다면?</strong><br />
+A. 그래도 6단계를 지키고, N단계 검증만큼은 <strong>다른 AI의 무료 버전</strong>으로 하세요.</p>
+<p><strong>Q. 시간이 더 들지 않나요?</strong><br />
+A. 처음 2~3주는 더 듭니다. 익숙해지면 자료조사 시간이 크게 줄고, 그만큼 <strong>묵상과 기도에 시간을 돌려주는 것</strong>이 목표입니다.</p></div></section>
+<section id="s4" class="part"><header class="sec-head"><p class="kicker">Part 4</p><h1>오케스트레이션 — 3명의 AI 조수를 지휘하는 법 (15분)</h1></header><div class="prose"><blockquote>
+<p><strong>오케스트레이션</strong> = 여러 AI가 각자 맡은 파트를 연주하되, <strong>악보(순서)와 지휘자(설교자)</strong>가 있는 상태.<br />
+지휘자가 없으면 3대장은 각자 다른 곡을 연주합니다.</p>
+</blockquote>
+<hr />
+<h2>1. 오케스트레이션의 4요소</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>요소</th>
+<th>의미</th>
+<th>이 하네스에서</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎼 <strong>악보</strong></td>
+<td>순서와 단계</td>
+<td>S.E.R.M.O.N. 6단계</td>
+</tr>
+<tr>
+<td>🎻 <strong>파트 배정</strong></td>
+<td>누가 무엇을</td>
+<td>배치표 (Part 3)</td>
+</tr>
+<tr>
+<td>📨 <strong>인수인계서</strong></td>
+<td>AI 사이에 넘기는 표준 양식</td>
+<td><a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/templates/핸드오프-패킷.md">핸드오프 패킷</a></td>
+</tr>
+<tr>
+<td>🎙 <strong>지휘자</strong></td>
+<td>결정·검증·통합</td>
+<td><strong>설교자</strong> (+ 보조 지휘자 Claude Code)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>핸드오프 패킷이 핵심인 이유</h3>
+<p>AI는 다른 AI와의 대화를 모릅니다. 매번 <strong>"지금까지의 상황"</strong>을 넘겨줘야 합니다.<br />
+패킷에는 항상 5가지가 들어갑니다:</p>
+<pre><button class="copy" type="button">복사</button><code>① 설교 기본정보 (본문·일시·청중·신학 전통)
+② 확정된 것 (묵상 요지, 확정 명제 — &quot;바꾸지 말 것&quot;)
+③ 이번 요청 (한 가지만)
+④ 참고 자료 (이전 단계 결과 중 필요한 부분만)
+⑤ 응답 형식 (표/목록, 분량, [검증필요] 표시 규칙)
+</code></pre>
+<hr />
+<h2>2. 세 가지 수준</h2>
+<h3>Level 1 — 수동 릴레이 (누구나, 오늘부터)</h3>
+<pre><button class="copy" type="button">복사</button><code>[설교자] ─묵상─▶ Claude(E) ─패킷─▶ Gemini(R) ─패킷─▶ Claude(M)
+                                                    │
+        ◀── 설교자 최종 ── Gemini(N사실)/Claude(N신학) ◀── ChatGPT(O발상) + Claude(O원고)
+</code></pre>
+<ul>
+<li>브라우저 탭 3개 + 메모장(또는 구글 문서) 1개 = <strong>"설교 작업 문서"</strong></li>
+<li>각 단계 결과를 작업 문서에 모으고, 다음 AI에 줄 때 패킷 양식으로 잘라서 붙임</li>
+<li>도구: <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts">prompts/</a> 카드, <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/templates">templates/</a></li>
+</ul>
+<h3>Level 2 — 프로젝트 고정 (매주 설교하는 분께 추천)</h3>
+<p>각 AI에 <strong>"설교 프로젝트"를 한 번 만들어 두면</strong> 매주 설명할 필요가 없습니다.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>AI</th>
+<th>기능</th>
+<th>넣어 둘 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude</td>
+<td><strong>Projects</strong> (프로젝트 지침 + 프로젝트 지식)</td>
+<td>지침: <a href="https://github.com/hglee04261-lab/-/blob/claude/magical-carson-565iar/prompts/05-프로젝트-지침.md">05-프로젝트-지침</a>의 Claude용 / 지식: 내 설교 5~10편, 교회 소개, 연간 설교 계획</td>
+</tr>
+<tr>
+<td>ChatGPT</td>
+<td><strong>Projects</strong> (+ 메모리)</td>
+<td>지침: ChatGPT용 / 파일: 교회 연령 분포, 지역 특성, 소그룹 구성</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td><strong>Gem</strong>(맞춤 지침) + <strong>Gemini Notebook</strong>(내 서재)</td>
+<td>Gem: Gemini용 지침 / Notebook: 주석 PDF, 성경사전, 논문</td>
+</tr>
+</tbody>
+</table></div>
+<p>→ 이제 매주 <strong>"이번 주 본문은 ○○, 단계 R 시작"</strong> 한 줄이면 됩니다.</p>
+<h3>Level 3 — Claude Code 지휘 (디지털 숙련자, 이 저장소)</h3>
+<p>Claude Code가 <strong>보조 지휘자</strong>가 되어 단계 진행, 파일 정리, 패킷 생성, 서브에이전트 병렬 검증을 자동으로 합니다.</p>
+<pre><button class="copy" type="button">복사</button><code>/sermon-start  본문 | 일시 | 청중 | 묵상요지   → 폴더 생성, 브리프 작성, 묵상 확인
+      ↓ (Claude: E단계 — exegete 에이전트)
+/handoff gemini R                              → Gemini에 붙여넣을 패킷 생성
+      ↓ (설교자가 Gemini 결과를 handoff/from-gemini-R.md에 저장)
+/integrate gemini R                            → 출처 등급 분류, 03-연구.md 통합
+      ↓ (Claude: M단계 명제 후보 → 설교자 결정)
+/handoff gpt O                                 → ChatGPT 발상 요청 패킷
+/integrate gpt O                               → 예화 후보 선별, 실화/창작 구분
+      ↓ (Claude: 개요·원고 초안 → 설교자 손질)
+/crosscheck                                    → 4개 서브에이전트 병렬 검증 + Gemini 사실검증 패킷
+/finalize                                      → 체크리스트 통과, 낭독 시간 추정, AI 사용기록 완성
+</code></pre>
+<p>내부 구성:</p>
+<pre><button class="copy" type="button">복사</button><code> 설교자(지휘자)
+    │
+ Claude Code (보조 지휘자: sermon-orchestrator 스킬)
+    ├── exegete            본문 주해가
+    ├── theology-reviewer  신학 검증관 (웨슬리안·성결)
+    ├── homiletics-coach   설교학 코치
+    ├── fact-checker       사실 검증관
+    ├── congregation-voice 청중 대변인
+    ├── ⇄ Gemini  (핸드오프 패킷 왕복)
+    └── ⇄ ChatGPT (핸드오프 패킷 왕복)
+ + 훅: 원고 저장 시 [검증필요]·출처 누락 자동 경고
+</code></pre>
+<hr />
+<h2>3. 매주 루틴 — 주간 설교 오케스트레이션 시간표</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>요일</th>
+<th>단계</th>
+<th>시간</th>
+<th>도구</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>월</td>
+<td>쉼</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>화 오전</td>
+<td><strong>S</strong> 묵상</td>
+<td>60분+</td>
+<td>성경, 기도 (AI 없음)</td>
+</tr>
+<tr>
+<td>화 오후</td>
+<td><strong>E</strong> 주해</td>
+<td>60분</td>
+<td>Claude + 원어 성경</td>
+</tr>
+<tr>
+<td>수</td>
+<td><strong>R</strong> 연구</td>
+<td>60분</td>
+<td>Gemini (+ Notebook)</td>
+</tr>
+<tr>
+<td>목 오전</td>
+<td><strong>M</strong> 명제</td>
+<td>30분</td>
+<td>Claude 스파링 → 결정</td>
+</tr>
+<tr>
+<td>목 오후</td>
+<td><strong>O</strong> 개요·발상</td>
+<td>60분</td>
+<td>ChatGPT 발상 → Claude 개요</td>
+</tr>
+<tr>
+<td>금</td>
+<td><strong>O</strong> 원고</td>
+<td>90분</td>
+<td>Claude 초안 → 직접 손질</td>
+</tr>
+<tr>
+<td>토</td>
+<td><strong>N</strong> 검증·낭독</td>
+<td>60분</td>
+<td>교차검증 → 소리 내어 읽기 → 기도</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>AI로 아낀 시간은 <strong>화요일 묵상과 토요일 기도에 돌려드립니다.</strong></p>
+</blockquote>
+<hr />
+<h2>4. 지휘자의 5가지 원칙</h2>
+<ol>
+<li><strong>순서를 지킨다</strong> — S 없이 E 없고, M 없이 O 없다.</li>
+<li><strong>한 번에 하나만 시킨다</strong> — 패킷의 "이번 요청"은 하나.</li>
+<li><strong>확정한 것은 잠근다</strong> — 명제가 정해지면 "바꾸지 말 것"으로 넘긴다.</li>
+<li><strong>쓴 AI가 검증하지 않는다</strong> — 반드시 교차검증.</li>
+<li><strong>기록한다</strong> — AI 사용기록은 설교자의 정직성과 다음 설교의 학습 자료다.</li>
+</ol></div></section>
+<section id="a1" class="appendix"><header class="sec-head"><p class="kicker">부록 A</p><h1>슬라이드 구성안 (24장, 120분)</h1></header><div class="prose"><blockquote>
+<p>한 장 = 한 메시지. 글자는 적게, 시연 화면은 크게.</p>
+</blockquote>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>제목</th>
+<th>화면 내용</th>
+<th>시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>AI와 함께 준비하는 최고의 설교</td>
+<td>제목, 강사, 서울신학대학교 설교대학원</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>오늘의 한 문장</td>
+<td>"AI는 서재를 넓혀 주지만, 강단에 대신 서 주지는 않는다"</td>
+<td>0:02</td>
+</tr>
+<tr>
+<td>3</td>
+<td>왜 실망했을까?</td>
+<td>흔한 실패 3가지 (한 번에 다 / 하나만 믿기 / 묵상 없이)</td>
+<td>0:05</td>
+</tr>
+<tr>
+<td>4</td>
+<td>오늘의 약속</td>
+<td>6단계 + 3명의 조수 + 1명의 지휘자</td>
+<td>0:08</td>
+</tr>
+<tr>
+<td><strong>Part 1</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>AI 3대장 한 줄 성격</td>
+<td>📚 사서 / 💡 동역자 / ✍️ 편집자</td>
+<td>0:10</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>[LIVE]</strong> 같은 질문, 세 개의 답</td>
+<td>3분할 화면 — 탕자 비유 유산 질문</td>
+<td>0:15</td>
+</tr>
+<tr>
+<td>7</td>
+<td>관찰 포인트</td>
+<td>출처는 진짜인가 / 모른다고 하는가 / 설교에 쓸 만한가</td>
+<td>0:22</td>
+</tr>
+<tr>
+<td>8</td>
+<td>설교 준비 장단점 표</td>
+<td>01-AI-3대장-비교 §3 요약</td>
+<td>0:25</td>
+</tr>
+<tr>
+<td>9</td>
+<td>그래서 누구에게 무엇을?</td>
+<td>찾는다 / 떠올린다 / 다듬는다</td>
+<td>0:28</td>
+</tr>
+<tr>
+<td><strong>Part 2</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>S.E.R.M.O.N.</td>
+<td>6단계 전체 그림 + "검증은 매 단계"</td>
+<td>0:30</td>
+</tr>
+<tr>
+<td>11</td>
+<td>S — AI를 끄는 시간</td>
+<td>묵상 메모 3줄 양식</td>
+<td>0:33</td>
+</tr>
+<tr>
+<td>12</td>
+<td>E — AI는 질문하는 조교</td>
+<td>주해 프롬프트 + 결과 화면</td>
+<td>0:36</td>
+</tr>
+<tr>
+<td>13</td>
+<td>R — 출처를 가져오는 사서</td>
+<td>리서치 프롬프트 + 출처 클릭 화면</td>
+<td>0:42</td>
+</tr>
+<tr>
+<td>14</td>
+<td>M — 결정은 설교자</td>
+<td>명제 후보 3개 → 내가 고른다</td>
+<td>0:48</td>
+</tr>
+<tr>
+<td>15</td>
+<td>O — 초안 작가와 편집장</td>
+<td>개요 3안 → 예화 → 내 문체 원고</td>
+<td>0:53</td>
+</tr>
+<tr>
+<td>16</td>
+<td>N — 쓴 AI가 검증하지 않는다</td>
+<td>4중 검증 표</td>
+<td>0:58</td>
+</tr>
+<tr>
+<td></td>
+<td>☕ 휴식</td>
+<td>"실습지 1번에 다음 주 본문을 적어 오세요"</td>
+<td>1:00</td>
+</tr>
+<tr>
+<td><strong>Part 3</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>배치표</td>
+<td>6단계 × 3대장 표</td>
+<td>1:10</td>
+</tr>
+<tr>
+<td>18</td>
+<td><strong>[LIVE]</strong> 탕자 비유 릴레이</td>
+<td>Claude → Gemini → Claude → ChatGPT → Claude → 교차검증</td>
+<td>1:13</td>
+</tr>
+<tr>
+<td>19</td>
+<td>지금 해 보세요</td>
+<td>실습지 2번 — E단계 프롬프트 QR</td>
+<td>1:30</td>
+</tr>
+<tr>
+<td><strong>Part 4</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>오케스트레이션 4요소</td>
+<td>악보 / 파트 / 인수인계서 / 지휘자</td>
+<td>1:35</td>
+</tr>
+<tr>
+<td>21</td>
+<td>핸드오프 패킷</td>
+<td>5칸 양식</td>
+<td>1:38</td>
+</tr>
+<tr>
+<td>22</td>
+<td>세 가지 수준</td>
+<td>Level 1·2·3 + Level 3 짧은 시연</td>
+<td>1:41</td>
+</tr>
+<tr>
+<td>23</td>
+<td>매주 루틴</td>
+<td>화~토 시간표</td>
+<td>1:48</td>
+</tr>
+<tr>
+<td><strong>마무리</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>가드레일 5 &amp; 과제</td>
+<td>묵상 먼저 / 지어내지 않기 / 결정은 설교자 / 개인정보 금지 / 기록하기 · 과제 안내 · 마지막 한 문장</td>
+<td>1:50</td>
+</tr>
+</tbody>
+</table></div>
+<h2>디자인 메모</h2>
+<ul>
+<li>색 구분: Gemini = 파랑, ChatGPT = 초록, Claude = 주황, 설교자 = 진한 남색</li>
+<li>LIVE 슬라이드는 큰 빨간 점 표시 → 화면 전환 신호</li>
+<li>각 단계 슬라이드 오른쪽 하단에 해당 프롬프트 카드 번호(G-1, P-2, C-3 …)</li>
+</ul></div></section>
+<section id="a2" class="appendix"><header class="sec-head"><p class="kicker">부록 B</p><h1>실습지 — AI와 함께 준비하는 최고의 설교</h1></header><div class="prose"><p>이름: ______________  사역지: ______________</p>
+<hr />
+<h2>1. 다음 주 설교</h2>
+<ul>
+<li>본문: ______________________</li>
+<li>청중: ______________________ (연령·상황)</li>
+<li>절기/시리즈: ________________</li>
+</ul>
+<h2>2. S — 묵상 메모 (AI 없이, 지금 3분)</h2>
+<ol>
+<li>마음에 걸린 단어/구절: __________________________________</li>
+<li>이 본문이 나에게 하는 말: _______________________________</li>
+<li>우리 성도에게 필요한 말: ________________________________</li>
+</ol>
+<h2>3. E — 지금 휴대폰으로 실행해 보기</h2>
+<p>아무 AI나 열고 붙여넣으세요 (본문만 바꾸기):</p>
+<pre><button class="copy" type="button">복사</button><code>[본문] ________
+당신은 성경 주해 조교입니다. 해석이나 적용은 아직 하지 말고,
+문맥, 구조, 관찰 질문 10개, 주목할 원어 3개를 표로 정리하세요.
+확실하지 않은 내용은 [검증필요]로 표시하세요.
+</code></pre>
+<ul>
+<li>AI 덕분에 새롭게 보인 것 1가지: _____________________________</li>
+<li>AI가 틀렸거나 의심스러운 것 1가지: __________________________</li>
+</ul>
+<h2>4. 나의 역할분담 계획</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>단계</th>
+<th>사용할 AI</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E 주해</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>R 연구</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>M 명제</td>
+<td>결정: 나 / 스파링:</td>
+<td></td>
+</tr>
+<tr>
+<td>O 개요·원고</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>N 검증</td>
+<td>(원고를 쓴 AI가 아닌 것)</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2>5. 나의 가드레일 서약</h2>
+<ul>
+<li>[ ] AI를 열기 전에 먼저 묵상한다.</li>
+<li>[ ] AI가 준 인용·출처는 직접 확인한 것만 쓴다.</li>
+<li>[ ] 중심명제는 내가 결정한다.</li>
+<li>[ ] 성도의 개인정보를 넣지 않는다.</li>
+<li>[ ] AI 사용기록을 남긴다.</li>
+</ul>
+<h2>6. 과제</h2>
+<p>다음 주 설교를 S.E.R.M.O.N.으로 준비하고, <strong>AI 사용기록</strong>(templates/AI-사용기록.md)을 함께 가져오세요.</p>
+<blockquote>
+<p>프롬프트 카드 전체: 저장소 <code>prompts/</code> 폴더 (QR)</p>
+</blockquote></div></section>
+<footer>원본: 저장소 <code>lecture/</code> 폴더의 Markdown 문서 · <code>python3 scripts/build_lecture_html.py</code>로 다시 생성</footer>
+</main>
+</div>
+<script>
+document.querySelectorAll("pre .copy").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var code = btn.parentElement.querySelector("code");
+    var text = code ? code.innerText : "";
+    var done = function () { btn.textContent = "복사됨"; btn.classList.add("done");
+      setTimeout(function () { btn.textContent = "복사"; btn.classList.remove("done"); }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {});
+    }
+  });
+});
+var root = document.documentElement;
+try { var saved = localStorage.getItem("theme"); if (saved) root.dataset.theme = saved; } catch (e) {}
+document.getElementById("themeBtn").addEventListener("click", function () {
+  var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+});
+var links = Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+if ("IntersectionObserver" in window) {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) {
+        links.forEach(function (a) { a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id); });
+      }
+    });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  document.querySelectorAll("section, .hero").forEach(function (s) { io.observe(s); });
+}
+</script>
+</body>
+</html>
